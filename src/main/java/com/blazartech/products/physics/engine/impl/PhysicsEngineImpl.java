@@ -8,7 +8,6 @@ package com.blazartech.products.physics.engine.impl;
 import com.blazartech.products.physics.engine.Body;
 import com.blazartech.products.physics.engine.Force;
 import com.blazartech.products.physics.engine.PhysicsEngine;
-import com.blazartech.products.physics.engine.Vector2D;
 import com.blazartech.products.physics.engine.event.PhysicsEngineBodyEvent;
 import com.blazartech.products.physics.engine.event.PhysicsEngineBodyListener;
 import com.blazartech.products.physics.engine.event.PhysicsEngineForceEvent;
@@ -16,6 +15,10 @@ import com.blazartech.products.physics.engine.event.PhysicsEngineForceListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,14 +35,26 @@ $Log$
 @Service
 public class PhysicsEngineImpl implements PhysicsEngine {
 
+    private static final Logger logger = LoggerFactory.getLogger(PhysicsEngineImpl.class);
+    
     @Autowired
     private UpdatePositionPAB updatePositionPAB;
     
     @Override
     public void stepEngine(long dt) {
         // iterate over each body and accumulate the forces on that body.
+        List<Future<Void>> futures = new ArrayList<>();
+        
         bodyList.forEach((body) -> {
-            updatePositionPAB.updatePosition(body, forceList, dt);
+            futures.add(updatePositionPAB.updatePosition(body, forceList, dt));
+        });
+        
+        futures.forEach((future) -> {
+            try {
+                future.get();
+            } catch (ExecutionException | InterruptedException e) {
+                logger.error("error stepping engine: " + e.getMessage());
+            }
         });
     }
 

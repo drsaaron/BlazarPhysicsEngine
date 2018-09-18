@@ -8,6 +8,8 @@ import com.blazartech.products.physics.engine.PhysicsEngine;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import javax.annotation.PreDestroy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 /**
@@ -23,6 +25,8 @@ $Log$
 @Service
 public class PhysicsTimerImpl implements PhysicsTimer {
 
+    private static final Logger logger = LoggerFactory.getLogger(PhysicsTimerImpl.class);
+    
     private TimerState state = TimerState.NotStarted;
 
     @Override
@@ -92,6 +96,7 @@ public class PhysicsTimerImpl implements PhysicsTimer {
     @Override
     @PreDestroy
     public void stopEngine() {
+        logger.info("stopping the engine timer");
         timerThread = null;
         setState(TimerState.Disposed);
     }

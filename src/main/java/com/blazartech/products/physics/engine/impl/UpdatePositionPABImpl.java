@@ -9,8 +9,10 @@ import com.blazartech.products.physics.engine.Body;
 import com.blazartech.products.physics.engine.Force;
 import com.blazartech.products.physics.engine.Vector2D;
 import java.util.Collection;
+import java.util.concurrent.Future;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 
 /**
@@ -23,7 +25,7 @@ public class UpdatePositionPABImpl implements UpdatePositionPAB {
     private static final Logger logger = LoggerFactory.getLogger(UpdatePositionPABImpl.class);
     
     @Override
-    public void updatePosition(Body body, Collection<Force> forces, long dt) {
+    public Future<Void> updatePosition(Body body, Collection<Force> forces, long dt) {
         Vector2D accumulatedForce = new Vector2D(0, 0);
 
         logger.info("applying forces to body " + body);
@@ -43,6 +45,9 @@ public class UpdatePositionPABImpl implements UpdatePositionPAB {
         Vector2D position = body.getState().getPosition();
         position = position.add(velocity.multiply(dt / 1000.f));
         body.getState().setPosition(position);
+        
+        // done
+        return new AsyncResult<>(null);
     }
 
 }
