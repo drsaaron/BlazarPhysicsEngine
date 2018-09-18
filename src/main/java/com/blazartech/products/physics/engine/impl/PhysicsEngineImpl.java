@@ -16,6 +16,7 @@ import com.blazartech.products.physics.engine.event.PhysicsEngineForceListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -31,27 +32,15 @@ $Log$
 @Service
 public class PhysicsEngineImpl implements PhysicsEngine {
 
+    @Autowired
+    private UpdatePositionPAB updatePositionPAB;
+    
     @Override
     public void stepEngine(long dt) {
         // iterate over each body and accumulate the forces on that body.
-        for (Body body : bodyList) {
-            Vector2D accumulatedForce = new Vector2D(0, 0);
-
-            for (Force force : forceList) {
-                Vector2D appliedForce = force.calculateAcceleration(body, dt);
-                accumulatedForce = accumulatedForce.add(appliedForce);
-            }
-
-            // update the velocity based on the acceleration.
-            Vector2D velocity = body.getState().getVelocity();
-            velocity = velocity.add(accumulatedForce.multiply(dt/1000.f));
-            body.getState().setVelocity(velocity);
-
-            // update the position based on the velocity.
-            Vector2D position = body.getState().getPosition();
-            position = position.add(velocity.multiply(dt/1000.f));
-            body.getState().setPosition(position);
-        }
+        bodyList.forEach((body) -> {
+            updatePositionPAB.updatePosition(body, forceList, dt);
+        });
     }
 
     private final List<Body> bodyList = new ArrayList<>();
