@@ -16,6 +16,7 @@ import com.blazartech.products.physics.engine.event.PhysicsEngineForceListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import org.springframework.stereotype.Service;
 
 /**
  *
@@ -27,8 +28,10 @@ import java.util.List;
 $Log$
 ********************************************************************************/
 
+@Service
 public class PhysicsEngineImpl implements PhysicsEngine {
 
+    @Override
     public void stepEngine(long dt) {
         // iterate over each body and accumulate the forces on that body.
         for (Body body : bodyList) {
@@ -51,92 +54,104 @@ public class PhysicsEngineImpl implements PhysicsEngine {
         }
     }
 
-    private List<Body> bodyList = new ArrayList<Body>();
+    private final List<Body> bodyList = new ArrayList<>();
 
     private void fireBodyAddedEvent(Body body) {
-        for (PhysicsEngineBodyListener l : bodyListeners) {
+        bodyListeners.forEach((l) -> {
             PhysicsEngineBodyEvent event = new PhysicsEngineBodyEvent(this, body);
             l.bodyAdded(event);
-        }
+        });
     }
 
     private void fireBodyRemovedEvent(Body body) {
-        for (PhysicsEngineBodyListener l : bodyListeners) {
+        bodyListeners.forEach((l) -> {
             PhysicsEngineBodyEvent event = new PhysicsEngineBodyEvent(this, body);
             l.bodyDeleted(event);
-        }
+        });
     }
 
+    @Override
     public void addBody(Body body) {
         bodyList.add(body);
         fireBodyAddedEvent(body);
     }
 
+    @Override
     public void removeBody(Body body) {
         bodyList.remove(body);
         fireBodyRemovedEvent(body);
     }
 
-    private List<PhysicsEngineBodyListener> bodyListeners = new ArrayList<PhysicsEngineBodyListener>();
+    private final List<PhysicsEngineBodyListener> bodyListeners = new ArrayList<>();
 
+    @Override
     public void addBodyListener(PhysicsEngineBodyListener listener) {
         bodyListeners.add(listener);
     }
 
+    @Override
     public void removeBodyListener(PhysicsEngineBodyListener listener) {
         bodyListeners.remove(listener);
     }
 
-    private List<Force> forceList = new ArrayList<Force>();
+    private final List<Force> forceList = new ArrayList<>();
 
     private void fireForceAddedEvent(Force f) {
-        for (PhysicsEngineForceListener l : forceListeners) {
+        forceListeners.forEach((l) -> {
             PhysicsEngineForceEvent event = new PhysicsEngineForceEvent(this, f);
             l.forceAdded(event);
-        }
+        });
     }
 
     private void fireForceDeletedEvent(Force f) {
-        for (PhysicsEngineForceListener l : forceListeners) {
+        forceListeners.forEach((l) -> {
             PhysicsEngineForceEvent event = new PhysicsEngineForceEvent(this, f);
             l.forceRemoved(event);
-        }
+        });
     }
 
+    @Override
     public void addForce(Force force) {
         forceList.add(force);
         fireForceAddedEvent(force);
     }
 
+    @Override
     public void removeForce(Force force) {
         forceList.remove(force);
         fireForceDeletedEvent(force);
     }
 
-    private List<PhysicsEngineForceListener> forceListeners = new ArrayList<PhysicsEngineForceListener>();
+    private final List<PhysicsEngineForceListener> forceListeners = new ArrayList<>();
 
+    @Override
     public void addForceListener(PhysicsEngineForceListener listener) {
         forceListeners.add(listener);
     }
 
+    @Override
     public void removeForceListener(PhysicsEngineForceListener listener) {
         forceListeners.remove(listener);
     }
 
+    @Override
     public void removeAllBodies() {
         bodyList.clear();
         fireBodyRemovedEvent(null);
     }
 
+    @Override
     public void removeAllForces() {
         forceList.clear();
         fireForceDeletedEvent(null);
     }
 
+    @Override
     public Collection<Body> getBodies() {
         return bodyList;
     }
 
+    @Override
     public Collection<Force> getForces() {
         return forceList;
     }
