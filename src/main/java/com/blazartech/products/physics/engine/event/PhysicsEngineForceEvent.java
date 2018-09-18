@@ -20,7 +20,7 @@ $Log$
 
 public class PhysicsEngineForceEvent extends PhysicsEngineEvent {
 
-    private Force force;
+    private final Force force;
 
     /**
      * Get the value of force

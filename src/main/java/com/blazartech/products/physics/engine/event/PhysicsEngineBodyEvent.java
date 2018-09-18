@@ -19,7 +19,7 @@ $Log$
 
 public class PhysicsEngineBodyEvent extends PhysicsEngineEvent {
 
-    private Body body;
+    private final Body body;
 
     /**
      * Get the value of body
