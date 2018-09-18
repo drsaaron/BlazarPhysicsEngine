@@ -7,6 +7,7 @@ package com.blazartech.products.physics.engine.impl;
 
 import com.blazartech.products.physics.engine.Body;
 import com.blazartech.products.physics.engine.State;
+import com.blazartech.products.physics.engine.Vector2D;
 
 /**
  *
@@ -20,8 +21,22 @@ $Log$
 
 public class SimpleBody implements Body {
 
-    private State state = new State();
+    public static final double MASS = 1000;
+    public static final double INITIAL_X = 100;
+    public static final double INITIAL_Y = 100;
+    public static final double INITIAL_VX = 0;
+    public static final double INITIAL_VY = 0;
+    
+    private State state;
 
+    SimpleBody() {
+        state = new State();
+        
+        state.setMass(MASS);
+        state.setPosition(new Vector2D(INITIAL_X, INITIAL_Y));
+        state.setVelocity(new Vector2D(INITIAL_VX, INITIAL_VY));
+    }
+    
     /**
      * Get the value of state
      *

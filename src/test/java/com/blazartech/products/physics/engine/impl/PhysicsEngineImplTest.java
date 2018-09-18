@@ -7,9 +7,7 @@ package com.blazartech.products.physics.engine.impl;
 
 import com.blazartech.products.physics.engine.Body;
 import com.blazartech.products.physics.engine.Force;
-import com.blazartech.products.physics.engine.event.PhysicsEngineBodyListener;
-import com.blazartech.products.physics.engine.event.PhysicsEngineForceListener;
-import java.util.Collection;
+import com.blazartech.products.physics.engine.Vector2D;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -78,12 +76,27 @@ public class PhysicsEngineImplTest {
      */
     @Test
     public void testStepEngine() {
-        System.out.println("stepEngine");
-        long dt = 0L;
-        PhysicsEngineImpl instance = new PhysicsEngineImpl();
-        instance.stepEngine(dt);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        logger.info("stepEngine");
+        
+        long dt = 1L;
+        
+        Body body = new SimpleBody();
+        Force force = new SimpleForce();
+        
+        impl.removeAllBodies();
+        impl.addBody(body);
+        impl.removeAllForces();
+        impl.addForce(force);
+        
+        impl.stepEngine(dt);
+
+        Vector2D velocity = body.getState().getVelocity();
+        assertEquals(SimpleBody.INITIAL_VX + SimpleForce.ACCELERATION_X * dt / 1000, velocity.getX(), 0.1);
+        assertEquals(SimpleBody.INITIAL_VY + SimpleForce.ACCELERATION_Y * dt / 1000, velocity.getY(), 0.1);
+        
+        Vector2D position = body.getState().getPosition();
+        assertEquals(SimpleBody.INITIAL_X + (SimpleBody.INITIAL_VX + SimpleForce.ACCELERATION_X * dt / 1000) * dt, position.getX(), 0.1);
+        assertEquals(SimpleBody.INITIAL_Y + (SimpleBody.INITIAL_VY + SimpleForce.ACCELERATION_Y * dt / 1000) * dt, position.getY(), 0.1);
     }
 
     /**
@@ -123,134 +136,42 @@ public class PhysicsEngineImplTest {
         assertEquals(body2, b);
     }
 
-    /**
-     * Test of addBodyListener method, of class PhysicsEngineImpl.
-     */
-    @Test
-    public void testAddBodyListener() {
-        System.out.println("addBodyListener");
-        PhysicsEngineBodyListener listener = null;
-        PhysicsEngineImpl instance = new PhysicsEngineImpl();
-        instance.addBodyListener(listener);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of removeBodyListener method, of class PhysicsEngineImpl.
-     */
-    @Test
-    public void testRemoveBodyListener() {
-        System.out.println("removeBodyListener");
-        PhysicsEngineBodyListener listener = null;
-        PhysicsEngineImpl instance = new PhysicsEngineImpl();
-        instance.removeBodyListener(listener);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of addForce method, of class PhysicsEngineImpl.
-     */
     @Test
     public void testAddForce() {
-        System.out.println("addForce");
-        Force force = null;
-        PhysicsEngineImpl instance = new PhysicsEngineImpl();
-        instance.addForce(force);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        logger.info("testAddForce");
+        
+        Force force = new SimpleForce();
+        
+        impl.removeAllForces();
+        impl.addForce(force);
+        
+        assertEquals(1, impl.getForces().size());
     }
-
+    
     /**
      * Test of removeForce method, of class PhysicsEngineImpl.
      */
     @Test
     public void testRemoveForce() {
-        System.out.println("removeForce");
-        Force force = null;
-        PhysicsEngineImpl instance = new PhysicsEngineImpl();
-        instance.removeForce(force);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        logger.info("removeForce");
+        
+        Force force1 = new SimpleForce();
+        Force force2 = new SimpleForce();
+        
+        impl.removeAllForces();
+        impl.addForce(force1);
+        impl.addForce(force2);
+        
+        assertEquals(2, impl.getForces().size());
+
+        impl.removeForce(force1);
+        
+        assertEquals(1, impl.getForces().size());
+        
+        Force f = impl.getForces().iterator().next();
+        assertEquals(force2, f);
     }
 
-    /**
-     * Test of addForceListener method, of class PhysicsEngineImpl.
-     */
-    @Test
-    public void testAddForceListener() {
-        System.out.println("addForceListener");
-        PhysicsEngineForceListener listener = null;
-        PhysicsEngineImpl instance = new PhysicsEngineImpl();
-        instance.addForceListener(listener);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of removeForceListener method, of class PhysicsEngineImpl.
-     */
-    @Test
-    public void testRemoveForceListener() {
-        System.out.println("removeForceListener");
-        PhysicsEngineForceListener listener = null;
-        PhysicsEngineImpl instance = new PhysicsEngineImpl();
-        instance.removeForceListener(listener);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of removeAllBodies method, of class PhysicsEngineImpl.
-     */
-    @Test
-    public void testRemoveAllBodies() {
-        System.out.println("removeAllBodies");
-        PhysicsEngineImpl instance = new PhysicsEngineImpl();
-        instance.removeAllBodies();
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of removeAllForces method, of class PhysicsEngineImpl.
-     */
-    @Test
-    public void testRemoveAllForces() {
-        System.out.println("removeAllForces");
-        PhysicsEngineImpl instance = new PhysicsEngineImpl();
-        instance.removeAllForces();
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of getBodies method, of class PhysicsEngineImpl.
-     */
-    @Test
-    public void testGetBodies() {
-        System.out.println("getBodies");
-        PhysicsEngineImpl instance = new PhysicsEngineImpl();
-        Collection<Body> expResult = null;
-        Collection<Body> result = instance.getBodies();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of getForces method, of class PhysicsEngineImpl.
-     */
-    @Test
-    public void testGetForces() {
-        System.out.println("getForces");
-        PhysicsEngineImpl instance = new PhysicsEngineImpl();
-        Collection<Force> expResult = null;
-        Collection<Force> result = instance.getForces();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
+    
     
 }
