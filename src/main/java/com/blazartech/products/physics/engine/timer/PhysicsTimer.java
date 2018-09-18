@@ -54,4 +54,9 @@ public interface PhysicsTimer {
 
     void stopEngine();
     
+    /**
+     * is the timer running?
+     * @return 
+     */
+    boolean isRunning();
 }

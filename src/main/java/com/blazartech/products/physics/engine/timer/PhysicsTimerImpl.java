@@ -7,6 +7,7 @@ package com.blazartech.products.physics.engine.timer;
 import com.blazartech.products.physics.engine.PhysicsEngine;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import javax.annotation.PreDestroy;
 import org.springframework.stereotype.Service;
 
 /**
@@ -24,6 +25,7 @@ public class PhysicsTimerImpl implements PhysicsTimer {
 
     private TimerState state = TimerState.NotStarted;
 
+    @Override
     public boolean isRunning() {
         return getState() != TimerState.NotStarted && getState() != TimerState.Disposed;
     }
@@ -50,7 +52,7 @@ public class PhysicsTimerImpl implements PhysicsTimer {
         propertyChangeSupport.firePropertyChange("state", oldState, state);
     }
     
-    private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
+    private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
     /**
      * Add PropertyChangeListener.
@@ -71,6 +73,7 @@ public class PhysicsTimerImpl implements PhysicsTimer {
     public void removePropertyChangeListener(PropertyChangeListener listener) {
         propertyChangeSupport.removePropertyChangeListener(listener);
     }
+    
     private TimerThread timerThread;
 
     /**
@@ -87,6 +90,7 @@ public class PhysicsTimerImpl implements PhysicsTimer {
     }
 
     @Override
+    @PreDestroy
     public void stopEngine() {
         timerThread = null;
         setState(TimerState.Disposed);

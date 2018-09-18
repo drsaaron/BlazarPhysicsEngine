@@ -16,10 +16,10 @@ class TimerThread extends Thread {
     private final PhysicsEngine engine;
     private final long timeInterval;
     private final int maxIterations;
-    private final PhysicsTimerImpl outer;
+    private final PhysicsTimer timer;
 
-    public TimerThread(PhysicsEngine e, long i, int maxIterations, final PhysicsTimerImpl outer) {
-        this.outer = outer;
+    public TimerThread(PhysicsEngine e, long i, int maxIterations, final PhysicsTimer outer) {
+        this.timer = outer;
         engine = e;
         timeInterval = i;
         this.maxIterations = maxIterations;
@@ -31,12 +31,12 @@ class TimerThread extends Thread {
         long extraDt = 0;
         int iterationCount = 0;
         while (iterationCount < maxIterations) {
-            if (outer.isRunning()) {
+            if (timer.isRunning()) {
                 long now = System.currentTimeMillis();
                 long dt = now - lastRun;
                 long currentDt = extraDt + dt;
                 if (currentDt < timeInterval) {
-                    outer.setState(TimerState.Fast);
+                    timer.setState(TimerState.Fast);
                     long sleepTime = timeInterval - currentDt;
                     try {
                         Thread.sleep(sleepTime);
@@ -46,9 +46,9 @@ class TimerThread extends Thread {
                     extraDt = currentDt - timeInterval;
                     if (extraDt > timeInterval) {
                         extraDt = timeInterval;
-                        outer.setState(TimerState.Slow);
+                        timer.setState(TimerState.Slow);
                     } else {
-                        outer.setState(TimerState.Normal);
+                        timer.setState(TimerState.Normal);
                     }
                     lastRun = now;
                     engine.stepEngine(dt);
@@ -63,8 +63,9 @@ class TimerThread extends Thread {
                 extraDt = 0;
             }
         }
+        
         // done
-        outer.setState(TimerState.Disposed);
+        timer.setState(TimerState.Disposed);
     }
     
 }
