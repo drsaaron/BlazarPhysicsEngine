@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,11 +44,9 @@ public class PhysicsEngineImpl implements PhysicsEngine {
     @Override
     public void stepEngine(long dt) {
         // iterate over each body and accumulate the forces on that body.
-        List<Future<Void>> futures = new ArrayList<>();
-        
-        bodyList.forEach((body) -> {
-            futures.add(updatePositionPAB.updatePosition(body, forceList, dt));
-        });
+        List<Future<Void>> futures = bodyList.stream()
+                .map(b -> updatePositionPAB.updatePosition(b, forceList, dt))
+                .collect(Collectors.toList());
         
         futures.forEach((future) -> {
             try {

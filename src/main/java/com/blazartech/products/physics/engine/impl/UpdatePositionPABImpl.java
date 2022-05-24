@@ -24,15 +24,19 @@ public class UpdatePositionPABImpl implements UpdatePositionPAB {
 
     private static final Logger logger = LoggerFactory.getLogger(UpdatePositionPABImpl.class);
     
+    public Vector2D accumulateAcceleration(Body body, Collection<Force> forces, long dt) {
+        logger.debug("applying forces to body " + body);
+        Vector2D accumulatedAcceleration = forces.stream()
+                .map(f -> f.calculateAcceleration(body, dt))
+                .reduce(new Vector2D(), (accum, a) -> accum.add(a));
+        logger.debug("accumulated acceleration = " + accumulatedAcceleration);
+        return accumulatedAcceleration;
+    }
+    
     @Override
     public Future<Void> updatePosition(Body body, Collection<Force> forces, long dt) {
-        Vector2D accumulatedAcceleration = new Vector2D(0, 0);
 
-        logger.info("applying forces to body " + body);
-        for (Force force : forces) {
-            Vector2D acceleration = force.calculateAcceleration(body, dt);
-            accumulatedAcceleration = accumulatedAcceleration.add(acceleration);
-        }
+        Vector2D accumulatedAcceleration = accumulateAcceleration(body, forces, dt);
 
         // update the velocity based on the acceleration.
         logger.info("updating velocity");
