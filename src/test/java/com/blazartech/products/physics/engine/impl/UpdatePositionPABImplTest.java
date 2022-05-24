@@ -67,6 +67,26 @@ public class UpdatePositionPABImplTest {
     @After
     public void tearDown() {
     }
+    
+    @Test
+    public void testAccumulateAcceleration() {
+        logger.info("testAccumulateAcceleration");
+        
+        long dt = 1L;
+        
+        Body body = new SimpleBody();
+        Force force = new SimpleForce();
+        Force force2 = new SimpleForce2();
+        
+        List<Force> forces = new ArrayList<>();
+        forces.add(force);
+        forces.add(force2); 
+        
+        Vector2D acceleration = impl.accumulateAcceleration(body, forces, dt);
+        
+        assertEquals(SimpleForce.ACCELERATION_X + SimpleForce2.ACCELERATION_X, acceleration.getX(), 0.1);
+        assertEquals(SimpleForce.ACCELERATION_Y + SimpleForce2.ACCELERATION_Y, acceleration.getY(), 0.1);
+    }
 
     /**
      * Test of updatePosition method, of class UpdatePositionPABImpl.
