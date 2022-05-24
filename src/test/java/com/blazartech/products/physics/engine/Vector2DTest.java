@@ -5,7 +5,6 @@
  */
 package com.blazartech.products.physics.engine;
 
-import java.beans.PropertyChangeListener;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
