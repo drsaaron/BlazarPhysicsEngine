@@ -9,7 +9,7 @@ import com.blazartech.products.physics.engine.Body;
 import com.blazartech.products.physics.engine.Force;
 import com.blazartech.products.physics.engine.Vector2D;
 import java.util.Collection;
-import java.util.concurrent.Future;
+import java.util.concurrent.CompletableFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.AsyncResult;
@@ -34,7 +34,7 @@ public class UpdatePositionPABImpl implements UpdatePositionPAB {
     }
     
     @Override
-    public Future<Void> updatePosition(Body body, Collection<Force> forces, long dt) {
+    public CompletableFuture<Void> updatePosition(Body body, Collection<Force> forces, long dt) {
 
         Vector2D accumulatedAcceleration = accumulateAcceleration(body, forces, dt);
 
@@ -51,7 +51,7 @@ public class UpdatePositionPABImpl implements UpdatePositionPAB {
         body.getState().setPosition(position);
         
         // done
-        return new AsyncResult<>(null);
+        return CompletableFuture.completedFuture(null);
     }
 
 }

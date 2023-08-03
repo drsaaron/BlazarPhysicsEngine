@@ -24,7 +24,7 @@ class TimerThread extends Thread {
         timeInterval = i;
         this.maxIterations = maxIterations;
     }
-
+    
     @Override
     public void run() {
         long lastRun = System.currentTimeMillis();
@@ -39,7 +39,7 @@ class TimerThread extends Thread {
                     timer.setState(TimerState.Fast);
                     long sleepTime = timeInterval - currentDt;
                     try {
-                        Thread.sleep(sleepTime);
+                        sleep(sleepTime);
                     } catch (InterruptedException ex) {
                     }
                 } else {
@@ -56,7 +56,7 @@ class TimerThread extends Thread {
                 }
             } else {
                 try {
-                    Thread.sleep(timeInterval);
+                    sleep(timeInterval);
                 } catch (InterruptedException ex) {
                 }
                 lastRun = System.currentTimeMillis();

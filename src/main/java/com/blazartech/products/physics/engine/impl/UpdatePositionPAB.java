@@ -8,7 +8,7 @@ package com.blazartech.products.physics.engine.impl;
 import com.blazartech.products.physics.engine.Body;
 import com.blazartech.products.physics.engine.Force;
 import java.util.Collection;
-import java.util.concurrent.Future;
+import java.util.concurrent.CompletableFuture;
 import org.springframework.scheduling.annotation.Async;
 
 /**
@@ -18,5 +18,5 @@ import org.springframework.scheduling.annotation.Async;
 public interface UpdatePositionPAB {
     
     @Async
-    Future<Void> updatePosition(Body body, Collection<Force> forces, long dt);
+    CompletableFuture<Void> updatePosition(Body body, Collection<Force> forces, long dt);
 }

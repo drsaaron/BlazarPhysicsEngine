@@ -5,9 +5,9 @@
 package com.blazartech.products.physics.engine.timer;
 
 import com.blazartech.products.physics.engine.PhysicsEngine;
+import jakarta.annotation.PreDestroy;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import javax.annotation.PreDestroy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

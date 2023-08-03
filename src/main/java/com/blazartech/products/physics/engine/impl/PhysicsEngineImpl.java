@@ -15,8 +15,6 @@ import com.blazartech.products.physics.engine.event.PhysicsEngineForceListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,17 +42,11 @@ public class PhysicsEngineImpl implements PhysicsEngine {
     @Override
     public void stepEngine(long dt) {
         // iterate over each body and accumulate the forces on that body.
-        List<Future<Void>> futures = bodyList.stream()
+        bodyList.stream()
                 .map(b -> updatePositionPAB.updatePosition(b, forceList, dt))
-                .collect(Collectors.toList());
-        
-        futures.forEach((future) -> {
-            try {
-                future.get();
-            } catch (ExecutionException | InterruptedException e) {
-                logger.error("error stepping engine: " + e.getMessage());
-            }
-        });
+                .collect(Collectors.toList())
+                .stream()
+                .forEach(f -> f.join());        
     }
 
     private final List<Body> bodyList = new ArrayList<>();
