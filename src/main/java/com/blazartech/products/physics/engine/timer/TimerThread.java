@@ -8,8 +8,8 @@ package com.blazartech.products.physics.engine.timer;
 import com.blazartech.products.physics.engine.PhysicsEngine;
 
 /**
- * a thread that will periodically trigger the engine to update itself.
- * Surely this can be done better, with Timer or something?
+ * a thread that will periodically trigger the engine to update itself. Surely
+ * this can be done better, with Timer or something?
  */
 class TimerThread extends Thread {
 
@@ -24,48 +24,57 @@ class TimerThread extends Thread {
         timeInterval = i;
         this.maxIterations = maxIterations;
     }
+
+    private long lastRun;
+    private long extraDt;
+    private int iterationCount;
     
+    private void pause(long interval) {
+        try {
+            sleep(interval);
+        } catch (InterruptedException ex) {
+        }
+    }
+
+    private void step() {
+        if (timer.isRunning()) {
+            long now = System.currentTimeMillis();
+            long dt = now - lastRun;
+            long currentDt = extraDt + dt;
+            if (currentDt < timeInterval) {
+                timer.setState(TimerState.Fast);
+                long sleepTime = timeInterval - currentDt;
+                pause(sleepTime);
+            } else {
+                extraDt = currentDt - timeInterval;
+                if (extraDt > timeInterval) {
+                    extraDt = timeInterval;
+                    timer.setState(TimerState.Slow);
+                } else {
+                    timer.setState(TimerState.Normal);
+                }
+                lastRun = now;
+                engine.stepEngine(dt);
+                iterationCount++;
+            }
+        } else {
+            pause(timeInterval);
+            lastRun = System.currentTimeMillis();
+            extraDt = 0;
+        }
+    }
+
     @Override
     public void run() {
-        long lastRun = System.currentTimeMillis();
-        long extraDt = 0;
-        int iterationCount = 0;
+        lastRun = System.currentTimeMillis();
+        extraDt = 0;
+        iterationCount = 0;
         while (iterationCount < maxIterations) {
-            if (timer.isRunning()) {
-                long now = System.currentTimeMillis();
-                long dt = now - lastRun;
-                long currentDt = extraDt + dt;
-                if (currentDt < timeInterval) {
-                    timer.setState(TimerState.Fast);
-                    long sleepTime = timeInterval - currentDt;
-                    try {
-                        sleep(sleepTime);
-                    } catch (InterruptedException ex) {
-                    }
-                } else {
-                    extraDt = currentDt - timeInterval;
-                    if (extraDt > timeInterval) {
-                        extraDt = timeInterval;
-                        timer.setState(TimerState.Slow);
-                    } else {
-                        timer.setState(TimerState.Normal);
-                    }
-                    lastRun = now;
-                    engine.stepEngine(dt);
-                    iterationCount++;
-                }
-            } else {
-                try {
-                    sleep(timeInterval);
-                } catch (InterruptedException ex) {
-                }
-                lastRun = System.currentTimeMillis();
-                extraDt = 0;
-            }
+            step();
         }
-        
+
         // done
         timer.setState(TimerState.Disposed);
     }
-    
+
 }
