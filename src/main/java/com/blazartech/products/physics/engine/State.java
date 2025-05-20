@@ -66,7 +66,8 @@ public class State implements Serializable {
         this.position = position;
         propertyChangeSupport.firePropertyChange(PROP_POSITION, oldPosition, position);
     }
-    private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
+    
+    private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
     /**
      * Add PropertyChangeListener.
