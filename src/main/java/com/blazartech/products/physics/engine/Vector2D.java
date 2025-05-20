@@ -55,7 +55,7 @@ public class Vector2D implements Serializable  {
         propertyChangeSupport.firePropertyChange("x", oldX, x);
     }
 
-    private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
+    private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
     /**
      * Add PropertyChangeListener.
